@@ -98,6 +98,7 @@ public class ProductService {
         responseDTO.setDescription(savedProduct.getDescription());
         responseDTO.setPrice(savedProduct.getPrice());
         responseDTO.setStock(savedProduct.getStock());
+        responseDTO.setAvailable(true);
         responseDTO.setCreatedAt(savedProduct.getCreatedAt());
         responseDTO.setTagIds(savedProduct.getTags().stream().map(Tag::getIdTag).collect(Collectors.toList()));
         responseDTO.setCategoryIds(savedProduct.getCategories().stream().map(Category::getIdCategory).collect(Collectors.toList()));
@@ -203,6 +204,7 @@ public class ProductService {
         responseDTO.setDescription(existingProduct.getDescription());
         responseDTO.setPrice(existingProduct.getPrice());
         responseDTO.setStock(existingProduct.getStock());
+        responseDTO.setAvailable(true);
         responseDTO.setCreatedAt(existingProduct.getCreatedAt());
         responseDTO.setTagIds(existingProduct.getTags().stream().map(Tag::getIdTag).collect(Collectors.toList()));
         responseDTO.setCategoryIds(existingProduct.getCategories().stream().map(Category::getIdCategory).collect(Collectors.toList()));
