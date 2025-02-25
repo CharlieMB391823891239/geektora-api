@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -278,8 +279,8 @@ public class ProductService {
         return ResponseEntity.status(200).body("change product state successfully");
     }
 
-    public List<ProductResponseDTO> listAllProducts(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public List<ProductResponseDTO> listAllProducts(int page, int size, Sort sort) {
+        Pageable pageable = PageRequest.of(page,size,sort);
         Page<Product> productsPage  = productRepository.findAll(pageable);
 
         List<ProductResponseDTO> productResponseDTOs = new ArrayList<>();
@@ -293,6 +294,8 @@ public class ProductService {
             productResponseDTO.setCreatedAt(product.getCreatedAt());
             productResponseDTO.setTagIds(product.getTags().stream().map(Tag::getIdTag).collect(Collectors.toList()));
             productResponseDTO.setCategoryIds(product.getCategories().stream().map(Category::getIdCategory).collect(Collectors.toList()));
+
+
             List<Image> imageR = imageRepository.findByProduct_IdProduct(product.getIdProduct());
             List<ImageResponseDTO> imageResponseDTOs = new ArrayList<>();
             for (Image image : imageR) {
@@ -311,5 +314,11 @@ public class ProductService {
         }
 
         return productResponseDTOs; // Devolvemos la lista con los DTOs
+    }
+
+    public List<ProductResponseDTO> ListProductInAlpha(int page, int size) {
+
+        return listAllProducts(page, size, Sort.by("name"));
+
     }
 }

@@ -5,6 +5,7 @@ import com.geektora.geektora_api.DTO.product.ProductResponseDTO;
 import com.geektora.geektora_api.repository.article.ProductRepository;
 import com.geektora.geektora_api.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -69,12 +70,11 @@ public class ProductController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     )  {
-        return productService.listAllProducts(page,size);
+        return productService.listAllProducts(page,size, Sort.by("name"));
     }
 
-    @GetMapping("/filterproductCat/Alpha")
-    public  List<ProductResponseDTO> getProductsByCategory(@RequestParam("categoryId") List<Integer> categoryIds) {
-
-        return List.of();
+    @GetMapping("/filterproduct/Alpha")
+    public  List<ProductResponseDTO> getProductsListByAlpha(int page, int size) {
+        return productService.ListProductInAlpha(page,size);
     }
 }
