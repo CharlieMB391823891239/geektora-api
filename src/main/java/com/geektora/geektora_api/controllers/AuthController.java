@@ -23,5 +23,10 @@ public class AuthController {
     public String register(@RequestBody RegisterRequest registerRequest) {
         return authService.register(registerRequest);
     }
+    @PostMapping("/verify")
+    public String verify(@RequestParam String email, @RequestParam String code) {
+        return authService.verify(email, code);
+    }
+
 }
 

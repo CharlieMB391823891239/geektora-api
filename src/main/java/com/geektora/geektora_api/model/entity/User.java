@@ -22,4 +22,8 @@ public class User {
 
     private String contrasena;
 
+    @Column(name = "is_verified", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean isVerified = false;
+
+
 }
