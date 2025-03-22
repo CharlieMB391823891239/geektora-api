@@ -74,7 +74,25 @@ public class ProductController {
     }
 
     @GetMapping("/filterproduct/Alpha")
-    public  List<ProductResponseDTO> getProductsListByAlpha(int page, int size) {
+    public  List<ProductResponseDTO> getProductsListByAlpha(@RequestParam(defaultValue = "0") int page,
+                                                            @RequestParam(defaultValue = "10") int size) {
         return productService.ListProductInAlpha(page,size);
+    }
+
+    @GetMapping("/search/{name}")
+    public  List<ProductResponseDTO> getSimilarProductsListByName(@RequestParam(defaultValue = "0") int page,
+                                                                  @RequestParam(defaultValue = "10") int size,
+                                                                  @PathVariable("name") String name) {
+        return productService.getSimilarProducts(page,size,name);
+    }
+
+    @GetMapping("/getProduc/byCatAndTag")
+    public List<ProductResponseDTO> getProductsByCateAndTags(
+            @RequestParam(name = "idCats", required = false) List<Integer> idCats,
+            @RequestParam(name = "idTags", required = false) List<Integer> idTags,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        return productService.getProductByCatanTag(idCats, idTags, page, size);
     }
 }

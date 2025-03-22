@@ -280,11 +280,46 @@ public class ProductService {
     }
 
     public List<ProductResponseDTO> listAllProducts(int page, int size, Sort sort) {
-        Pageable pageable = PageRequest.of(page,size,sort);
-        Page<Product> productsPage  = productRepository.findAll(pageable);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Product> productsPage = productRepository.findAll(pageable);
 
+        // Usamos el nuevo metodo para convertir los productos a DTOs
+        return convertToDTOList(productsPage.getContent());
+    }
+
+    public List<ProductResponseDTO> ListProductInAlpha(int page, int size) {
+
+        return listAllProducts(page, size, Sort.by("name"));
+
+    }
+
+    public List<ProductResponseDTO> getSimilarProducts(int page, int size, String name) {
+        Sort sort = Sort.by(Sort.Direction.ASC, "name"); // Orden opcional
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        // Consulta en la base de datos
+        Page<Product> productsPage = productRepository.findByNameContainingIgnoreCase(name, pageable);
+
+        // Convertimos los productos a DTOs usando el nuevo metodo
+        return convertToDTOList(productsPage.getContent());
+    }
+
+    public List<ProductResponseDTO> getProductByCatanTag(List<Integer> idCats, List<Integer> idTags, int page, int size) {
+        Sort sort = Sort.by(Sort.Direction.ASC, "name");
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        List<Integer> categories = (idCats == null || idCats.isEmpty()) ? null : idCats;
+        List<Integer> tags = (idTags == null || idTags.isEmpty()) ? null : idTags;
+
+        Page<Product> productsPage = productRepository.findByCategoriesAndTags(categories, tags, pageable);
+
+        return convertToDTOList(productsPage.getContent());
+    }
+
+    private List<ProductResponseDTO> convertToDTOList(List<Product> products) {
         List<ProductResponseDTO> productResponseDTOs = new ArrayList<>();
-        for (Product product : productsPage.getContent()) {
+
+        for (Product product : products) {
             ProductResponseDTO productResponseDTO = new ProductResponseDTO();
             productResponseDTO.setName(product.getName());
             productResponseDTO.setDescription(product.getDescription());
@@ -295,7 +330,7 @@ public class ProductService {
             productResponseDTO.setTagIds(product.getTags().stream().map(Tag::getIdTag).collect(Collectors.toList()));
             productResponseDTO.setCategoryIds(product.getCategories().stream().map(Category::getIdCategory).collect(Collectors.toList()));
 
-
+            // Obtener imágenes
             List<Image> imageR = imageRepository.findByProduct_IdProduct(product.getIdProduct());
             List<ImageResponseDTO> imageResponseDTOs = new ArrayList<>();
             for (Image image : imageR) {
@@ -304,21 +339,14 @@ public class ProductService {
                 imageResponseDTO.setUrl(image.getUrl());
                 imageResponseDTO.setDeleteHash(image.getDeleteHash());
                 imageResponseDTO.setActive(image.isActive());
-                imageResponseDTO.setUrl(image.getUrl());
-                imageResponseDTO.setDeleteHash(image.getDeleteHash());
                 imageResponseDTO.setLaststate(image.isLaststate());
                 imageResponseDTOs.add(imageResponseDTO);
             }
             productResponseDTO.setImages(imageResponseDTOs);
-            productResponseDTOs.add(productResponseDTO); // Agregamos cada DTO a la lista
+
+            productResponseDTOs.add(productResponseDTO);
         }
 
-        return productResponseDTOs; // Devolvemos la lista con los DTOs
-    }
-
-    public List<ProductResponseDTO> ListProductInAlpha(int page, int size) {
-
-        return listAllProducts(page, size, Sort.by("name"));
-
+        return productResponseDTOs;
     }
 }
